@@ -1,6 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import * as argon2 from 'argon2';
 
@@ -16,6 +14,6 @@ export class AuthService {
       return foundUser;
     }
 
-    return null;
+    throw new UnauthorizedException('Invalid email or password');
   }
 }
