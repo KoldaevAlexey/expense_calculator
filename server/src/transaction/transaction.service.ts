@@ -32,8 +32,15 @@ export class TransactionService {
     return await this.transactionRepository.save(newTransaction);
   }
 
-  findAll() {
-    return `This action returns all transaction`;
+  async findAll(userId: number) {
+    const foundTrasactions = await this.transactionRepository.find({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+    });
+    return foundTrasactions;
   }
 
   findOne(id: number) {

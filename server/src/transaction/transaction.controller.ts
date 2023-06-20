@@ -16,6 +16,12 @@ import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
+interface IUserRequest {
+  user: {
+    userId: number;
+  };
+}
+
 @Controller('transaction')
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
@@ -25,14 +31,15 @@ export class TransactionController {
   @UseGuards(JwtAuthGuard)
   create(
     @Body() createTransactionDto: CreateTransactionDto,
-    @Req() { user: { userId } }: { user: { userId: number } },
+    @Req() { user: { userId } }: IUserRequest,
   ) {
     return this.transactionService.create(createTransactionDto, userId);
   }
 
   @Get()
-  findAll() {
-    return this.transactionService.findAll();
+  @UseGuards(JwtAuthGuard)
+  findAll(@Req() { user: { userId } }: IUserRequest) {
+    return this.transactionService.findAll(userId);
   }
 
   @Get(':id')
