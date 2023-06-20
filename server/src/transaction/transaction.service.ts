@@ -27,8 +27,6 @@ export class TransactionService {
       },
     ];
 
-    console.log(newTransaction);
-
     if (!newTransaction)
       throw new BadRequestException('Transaction not created');
     return await this.transactionRepository.save(newTransaction);
