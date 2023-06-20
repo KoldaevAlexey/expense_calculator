@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,8 +11,25 @@ export class TransactionService {
     @InjectRepository(Transaction)
     private readonly transactionRepository: Repository<Transaction>,
   ) {}
-  async create(createTransactionDto: CreateTransactionDto) {
-    return 'This action adds a new transaction';
+  async create(createTransactionDto: CreateTransactionDto, userId: number) {
+    const { title, amount, type, category } = createTransactionDto;
+    const newTransaction = [
+      {
+        title,
+        amount,
+        type,
+        category: {
+          id: +category,
+        },
+        user: {
+          id: userId,
+        },
+      },
+    ];
+
+    if (!newTransaction)
+      throw new BadRequestException('Transaction not created');
+    return await this.transactionRepository.save(newTransaction);
   }
 
   findAll() {
