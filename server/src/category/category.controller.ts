@@ -25,7 +25,12 @@ export class CategoryController {
   @UsePipes(new ValidationPipe())
   create(
     @Body() createCategoryDto: CreateCategoryDto,
-    @Req() { user: { id } }: { user: { id: number } },
+    @Req()
+    {
+      body: {
+        user: { id },
+      },
+    }: { body: { user: { id: number } } },
   ) {
     return this.categoryService.create(createCategoryDto, id);
   }

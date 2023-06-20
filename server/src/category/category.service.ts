@@ -16,6 +16,7 @@ export class CategoryService {
     private readonly categoryRepository: Repository<Category>,
   ) {}
   async create(createCategoryDto: CreateCategoryDto, id: number) {
+    console.log(id);
     const { title } = createCategoryDto;
     const existCategory = await this.categoryRepository.findBy({
       user: { id },

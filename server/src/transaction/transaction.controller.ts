@@ -23,11 +23,11 @@ export class TransactionController {
   @Post()
   @UsePipes(new ValidationPipe())
   @UseGuards(JwtAuthGuard)
-  create(
-    @Body() createTransactionDto: CreateTransactionDto,
-    @Req() { user: { id } }: { user: { id: number } },
-  ) {
-    return this.transactionService.create(createTransactionDto, id);
+  create(@Body() createTransactionDto: CreateTransactionDto, @Req() req) {
+    return this.transactionService.create(
+      createTransactionDto,
+      req.body.user.id,
+    );
   }
 
   @Get()
