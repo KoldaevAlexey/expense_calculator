@@ -37,7 +37,7 @@ export class TransactionService {
   }
 
   async findAll(userId: number) {
-    const foundTrasactions = await this.transactionRepository.find({
+    const foundTransactions = await this.transactionRepository.find({
       where: {
         user: {
           id: userId,
@@ -47,11 +47,11 @@ export class TransactionService {
         createdAt: 'DESC',
       },
     });
-    return foundTrasactions;
+    return foundTransactions;
   }
 
   async findOne(id: number) {
-    const foundTrasaction = await this.transactionRepository.findOne({
+    const foundTransactions = await this.transactionRepository.findOne({
       where: {
         id,
       },
@@ -61,24 +61,56 @@ export class TransactionService {
       },
     });
 
-    if (!foundTrasaction) throw new NotFoundException('Transaction not found');
+    if (!foundTransactions)
+      throw new NotFoundException('Transaction not found');
 
-    return foundTrasaction;
+    return foundTransactions;
   }
 
   async update(id: number, updateTransactionDto: UpdateTransactionDto) {
-    const foundTrasaction = await this.transactionRepository.findOne({
+    const foundTransactions = await this.transactionRepository.findOne({
       where: {
         id,
       },
     });
 
-    if (!foundTrasaction) throw new NotFoundException('Transaction not found');
+    if (!foundTransactions)
+      throw new NotFoundException('Transaction not found');
 
-    return `This action updates a #${id} transaction`;
+    return await this.transactionRepository.update(id, updateTransactionDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} transaction`;
+  async remove(id: number) {
+    const foundTransactions = await this.transactionRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!foundTransactions)
+      throw new NotFoundException('Transaction not found');
+
+    return this.transactionRepository.delete(id);
+  }
+
+  async findAllWithPagination(id: number, page: number, limit: number) {
+    const foundTransactions = await this.transactionRepository.find({
+      where: {
+        user: {
+          id,
+        },
+      },
+      relations: {
+        category: true,
+        user: true,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+      take: limit,
+      skip: (page - 1) * limit,
+    });
+
+    return foundTransactions;
   }
 }

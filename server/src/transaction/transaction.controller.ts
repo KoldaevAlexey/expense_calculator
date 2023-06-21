@@ -10,6 +10,7 @@ import {
   ValidationPipe,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { TransactionService } from './transaction.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
@@ -36,19 +37,30 @@ export class TransactionController {
     return this.transactionService.create(createTransactionDto, userId);
   }
 
+  @Get('pagination')
+  @UseGuards(JwtAuthGuard)
+  findAllWithPagination(
+    @Req() { user: { userId } }: IUserRequest,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    return this.transactionService.findAllWithPagination(userId, +page, +limit);
+  }
+
   @Get()
   @UseGuards(JwtAuthGuard)
   findAll(@Req() { user: { userId } }: IUserRequest) {
     return this.transactionService.findAll(userId);
   }
 
-  @Get(':id')
+  @Get(':type/:id')
   @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string) {
     return this.transactionService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Patch(':type/:id')
+  @UseGuards(JwtAuthGuard)
   update(
     @Param('id') id: string,
     @Body() updateTransactionDto: UpdateTransactionDto,
@@ -56,7 +68,8 @@ export class TransactionController {
     return this.transactionService.update(+id, updateTransactionDto);
   }
 
-  @Delete(':id')
+  @Delete(':type/:id')
+  @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string) {
     return this.transactionService.remove(+id);
   }

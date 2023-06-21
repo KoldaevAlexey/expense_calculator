@@ -1,1 +1,2 @@
 создать метод isExist в category.service
+создать метод foundTransactions в transaction.service
